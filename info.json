@@ -1,0 +1,9 @@
+{
+  "name": "quickbar-item-cycles",
+  "version": "1.0.0",
+  "title": "Quickbar Item Cycles",
+  "author": "me",
+  "factorio_version": "1.1",
+  "dependencies": ["base >= 1.1"],
+  "description": "Select items on the quickbar multiple times to get different items, e.g. yellow belt -> red belt -> blue belt. Also, for space exploration mod, automatically swap out the quick bar when entering/leaving space (can be disabled in settings)."
+}
