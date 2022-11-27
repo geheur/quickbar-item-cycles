@@ -1,0 +1,9 @@
+{
+  "name": "space-exploration-quickbar-space-items-swap",
+  "version": "0.1.0",
+  "title": "Space Items quick bar swap (Space Exploration)",
+  "author": "me",
+  "factorio_version": "1.1",
+  "dependencies": ["base >= 1.1"],
+  "description": "Automatically swap out space building on the quick bar when entering/leaving space."
+}
