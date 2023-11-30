@@ -159,22 +159,69 @@ local function rebuildGui(player_data)
 	-- TODO warn for single item cycles
 end
 
+-- https://forums.factorio.com/viewtopic.php?t=98713
+function add_titlebar(gui, caption, close_button_name)
+  local titlebar = gui.add{type = "flow"}
+  titlebar.drag_target = gui
+  titlebar.add{
+    type = "label",
+    style = "frame_title",
+    caption = caption,
+    ignored_by_interaction = true,
+  }
+  local filler = titlebar.add{
+    type = "empty-widget",
+    style = "draggable_space",
+    ignored_by_interaction = true,
+  }
+  filler.style.height = 24
+  filler.style.horizontally_stretchable = true
+  titlebar.add{
+    type = "sprite-button",
+    name = close_button_name,
+    style = "frame_action_button",
+    sprite = "utility/close_white",
+    hovered_sprite = "utility/close_black",
+    clicked_sprite = "utility/close_black",
+    tooltip = {"gui.close-instruction"},
+  }
+end
+
 local function openGui(player_index)
 	local player_data = get_player_data(player_index)
 	local elements = player_data.elements
-	if elements.main_frame then elements.main_frame.destroy() player_data.elements = {} return end
+	if elements.main_frame and elements.main_frame.valid then
+		elements.main_frame.destroy()
+		player_data.elements = {}
+		return
+	end
 
-	local screen_element = game.get_player(player_index).gui.screen
-	elements.main_frame = screen_element.add{type="frame", name="quickbar_cycles_configuration_frame", caption="Quickbar Cycles Configuration"}
-	elements.main_frame.style.size = {1385, 465}
-	elements.main_frame.auto_center = true
+	local player = game.get_player(player_index)
+	local frame = player.gui.screen.add{type="frame", name="quickbar_cycles_configuration_frame", direction="vertical"}
+	elements.main_frame = frame
+	frame.style.size = {1385, 465}
+	frame.auto_center = true
+	player.opened = frame
+	add_titlebar(frame, "Quickbar Item Cycles", "my-mod-x-button")
 
-	local content_frame = elements.main_frame.add{type="frame", name="content_frame", direction="vertical", --[[style="ugg_content_frame"]]}
+	-- local content_frame = frame.add{type="frame", name="content_frame", direction="vertical", --[[style="ugg_content_frame"]]}
 
-	elements.cycles_scroll_pane = content_frame.add{type="scroll-pane", name="cycles_scroll_pane", horizontal_scroll_policy="never", direction="vertical", --[[style="ugg_controls_flow"]]}
+	elements.cycles_scroll_pane = frame.add{type="scroll-pane", name="cycles_scroll_pane", horizontal_scroll_policy="never", direction="vertical", --[[style="ugg_controls_flow"]]}
+	elements.cycles_scroll_pane.style.horizontally_stretchable = true
 
 	rebuildGui(player_data)
 end
+
+script.on_event(defines.events.on_gui_click, function(event)
+  if event.element.name == "my-mod-x-button" then
+    event.element.parent.parent.destroy()
+  end
+end)
+script.on_event(defines.events.on_gui_closed, function(event)
+  if event.element and event.element.valid and event.element.name == "quickbar_cycles_configuration_frame" then
+    event.element.destroy()
+  end
+end)
 
 script.on_event(defines.events.on_gui_elem_changed, function(event)
 	if not event.element.tags.quickbar_cycles_cycle_index then return end
