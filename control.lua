@@ -359,3 +359,16 @@ function is_space(zone)
   return not is_solid(zone)
 end
 
+script.on_event("toggle-train-control", function(event)
+	local player = game.get_player(event.player_index)
+	if player.opened and player.opened.train then
+		player.opened.train.manual_mode = not player.opened.train.manual_mode
+		return
+	end
+   local vehicle = player.vehicle
+   if vehicle and vehicle.train then
+      -- vehicle.train.manual_mode = not vehicle.train.manual_mode
+		local a_locomotive = vehicle.train.locomotives["front_movers"][1]
+		if a_locomotive then player.opened = a_locomotive end
+   end
+end)
