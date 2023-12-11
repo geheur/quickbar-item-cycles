@@ -298,7 +298,7 @@ local function swap_quickbars(player, quickbar_read, quickbar_write)
 end
 
 script.on_event(defines.events.on_player_changed_surface, function(event)
-	if not settings.get_player_settings(event.player_index)["space-exploration-space-bar-swap"].value then
+	if not settings.get_player_settings(event.player_index)["space-exploration-space-bar-swap"].value or not remote.interfaces["space-exploration"] or not remote.interfaces["space-exploration"]["get_surface_type"] then
 		return
 	end
 
